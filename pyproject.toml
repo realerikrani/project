@@ -1,0 +1,15 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "realerikrani-project"
+version = "1.0.0"
+requires-python = ">=3.12"
+dynamic = ["dependencies"]
+
+[tool.setuptools.dynamic]
+dependencies = { file = ["requirements/prod.in"] }
+
+[tool.setuptools.package-data]
+"*" = ["py.typed"]

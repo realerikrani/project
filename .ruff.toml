@@ -1,0 +1,67 @@
+lint.select = ["ALL"]
+lint.ignore = [
+    "ISC001",  # Avoid "ruff format" warning
+    "A001",    # Variable `id` is shadowing a Python builtin
+    "PLR0913", # Too many arguments to function call (8 > 5)
+    "EXE002",  # The file is executable but no shebang is present
+    "COM812",  # [*] Trailing comma missing
+    "D100",    # Missing docstring in public module
+    "D101",    # Missing docstring in public class
+    "D102",    # Missing docstring in public method
+    "D103",    # Missing docstring in public function
+    "D105",    # Missing docstring in magic method
+    "D211",    # no-blank-line-before-class
+    "D213",    # multi-line-summary-second-line
+    "TRY003",  # Avoid specifying long messages outside the exception class
+    "EM101",   # Exception must not use a string literal, assign to variable first
+    "PLR0912", # Too many branches
+    "C901",    # `...` is too complex
+    "A002",    # Argument `id` is shadowing a Python builtin
+    "E731",    # Do not assign a `lambda` expression, use a `def`
+    "PLR2004", # Magic value used in comparison, consider replacing `100` with a constant variable
+]
+lint.per-file-ignores = {"__init__*" = [
+    "D104", # Missing docstring in public package
+], "test*" = [
+    "BLE001", # Do not catch blind exception: `Exception`
+    "S101",   # Use of `assert` detected
+    "ARG001", # Unused function argument: `collection`
+    "ANN201", # Missing return type annotation for public function `test_it_returns_updated_project`
+    "PT017",  # Found assertion on exception `eg` in `except` block, use `pytest.raises()` instead
+    "SLF001", # Private member accessed: `_id`
+    "C408",   # [*] Unnecessary `dict` call (rewrite as a literal)
+    "ANN201", # Missing return type annotation for public function `mongo_uri`",
+    "DTZ001", # The use of `datetime.datetime()` without `tzinfo` argument is not allowed
+    "ANN202", # Missing return type annotation for private function
+    "ANN201", # Missing return type annotation for public function `mongo_uri`"
+    "PT004",  # Fixture `protect` does not return anything, add leading underscore
+    "S113", # Probable use of requests call without timeout
+], "blueprint*" = [
+"ANN201",  # Missing return type annotation for public function `create_project_with_key`
+]}
+
+lint.flake8-annotations = { allow-star-arg-any = true }
+
+lint.pydocstyle.convention = "google"
+
+line-length = 88
+
+# Allow unused variables when underscore-prefixed.
+lint.dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+target-version = "py311"
+
+lint.mccabe = { "max-complexity" = 10 }
+exclude = [
+    ".eggs",
+    ".git",
+    ".mypy_cache",
+    ".pytype",
+    ".ruff_cache",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "build",
+    "dist",
+    "venv",
+    ".venv",
+]
