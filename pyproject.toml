@@ -5,8 +5,12 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "realerikrani-project"
 version = "1.0.0"
+description = "Add key-based project management API endpoints to your flask app."
 requires-python = ">=3.12"
 dynamic = ["dependencies"]
+readme = "README.md"
+license = { text = "Apache-2.0" }
+urls = { "Repository" = "https://github.com/realerikrani/project" }
 
 [tool.setuptools.dynamic]
 dependencies = { file = ["requirements/prod.in"] }
