@@ -3,7 +3,7 @@
   "info": {
     "title": "Project API",
     "version": "1.0.0",
-    "description": "Before creating a new project and registering its public key\n\n1. Generate RSA private key `openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:4096`\n2. Extract the public key `openssl rsa -pubout -in private_key.pem -out public_key.pem`\n"
+    "description": "Before creating a new project and registering its public key\n\n1. Generate RSA private key `openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:4096`\n2. Extract the public key `openssl rsa -pubout -in private_key.pem -out public_key.pem`\n3. Get the public key's content as a single string with `awk '{printf \"%s\\\\n\", $0}' public_key.pem | sed 's/\\\\n$//'`\n"
   },
   "tags": [
     {
@@ -13,6 +13,22 @@
     {
       "name": "keys",
       "description": "Public keys of projects"
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://127.0.0.1:{port}",
+      "description": "Local development server",
+      "variables": {
+        "port": {
+          "default": "5000",
+          "enum": [
+            "5000",
+            "8080",
+            "3000"
+          ]
+        }
+      }
     }
   ],
   "paths": {
