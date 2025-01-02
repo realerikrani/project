@@ -41,7 +41,7 @@ def test_it_creates_project_and_key_forbids_invalid_key(
     client: FlaskClient, mocker: MockerFixture
 ):
     # given
-    req = {"name": "any name", "kind": "pricing", "public_key": _KEY.pem}
+    req = {"name": "any name", "public_key": _KEY.pem}
     error = PublicKeyInvalidError()
     mocker.patch.object(repo, "create_project_with_key", side_effect=error)
 

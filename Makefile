@@ -3,6 +3,13 @@ test:
 	python3 -m pip install -e .
 	PROJECT_DATABASE_PATH=./projects.sqlite python3 -m pytest
 
+.PHONY: test-system
+test-system:
+	nohup python3 demo.py -d > demo.log 2>&1 & echo $$! > demo.pid
+	PROJECT_DATABASE_PATH=./projects.sqlite python3 -m pytest -m pysteptest
+	kill $$(cat demo.pid)
+	rm demo.pid ./projects.sqlite
+
 .PHONY: lint
 lint:
 	python3 -m ruff check .
