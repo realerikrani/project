@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Project API
-  version: 1.0.0
+  version: 1.0.1
   description: |
     Before creating a new project and registering its public key
 
