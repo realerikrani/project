@@ -87,6 +87,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorGroup"
+        "409":
+          description: The public key is already registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorGroup"
     get:
       summary: Read a project
       tags:

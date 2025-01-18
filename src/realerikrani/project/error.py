@@ -19,7 +19,9 @@ class PublicKeyNotFoundError(ProjectError):
 
 
 @dataclass(slots=True)
-class PublicKeyDuplicateError(ProjectError): ...
+class PublicKeyDuplicateError(ProjectError):
+    message: str = "public key is already registered"
+    code: str = "RESOURCE_ALREADY_EXISTING"
 
 
 @dataclass(slots=True)
@@ -29,7 +31,9 @@ class PublicKeyInvalidError(ProjectError):
 
 
 @dataclass(slots=True)
-class ProjectNameError(ProjectError): ...
+class ProjectNameError(ProjectError):
+    message: str = "project name must be 1..100 characters"
+    code: str = "VALUE_INVALID"
 
 
 @dataclass(slots=True)

@@ -6,7 +6,9 @@ from realerikrani.base64token import encode
 from realerikrani.flaskapierr import Error, ErrorGroup
 from realerikrani.project import bearer_extractor, payload_converter
 from realerikrani.project.error import (
+    ProjectNameError,
     ProjectNotFoundError,
+    PublicKeyDuplicateError,
     PublicKeyInvalidError,
     PublicKeyNotFoundError,
 )
@@ -52,8 +54,12 @@ def create_project_with_key():  # type: ignore[no-untyped-def]
     name, public_key = to_name_key(dict(request.json))  # type: ignore[arg-type]
     try:
         project, key = service.create_project_with_key(name, public_key)
-    except PublicKeyInvalidError as pki:
-        raise ErrorGroup("400", [Error(pki.message, pki.code)]) from None
+    except (PublicKeyInvalidError, ProjectNameError) as bad_err:
+        raise ErrorGroup("400", [Error(bad_err.message, bad_err.code)]) from None
+    except PublicKeyDuplicateError as duplicate_err:
+        raise ErrorGroup(
+            "409", [Error(duplicate_err.message, duplicate_err.code)]
+        ) from None
     return ({"project": project, "kid": key.id}, 201)
 
 

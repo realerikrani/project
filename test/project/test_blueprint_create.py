@@ -11,7 +11,13 @@ from pytest_mock import MockerFixture
 from realerikrani.project import bearer_extractor
 from realerikrani.project.app import register_project
 from realerikrani.project.blueprint import repo, service
-from realerikrani.project.error import ProjectNotFoundError, PublicKeyInvalidError
+from realerikrani.project.error import (
+    ProjectError,
+    ProjectNameError,
+    ProjectNotFoundError,
+    PublicKeyDuplicateError,
+    PublicKeyInvalidError,
+)
 from realerikrani.project.model import Project, PublicKey
 
 _KEY = Mock(
@@ -37,19 +43,27 @@ def protect(mocker: MockerFixture):
 
 
 @pytest.mark.usefixtures("protect")
-def test_it_creates_project_and_key_forbids_invalid_key(
-    client: FlaskClient, mocker: MockerFixture
+@pytest.mark.parametrize(
+    ("err", "code"),
+    [
+        (PublicKeyInvalidError, 400),
+        (ProjectNameError, 400),
+        (PublicKeyDuplicateError, 409),
+    ],
+)
+def test_creating_project_and_key_returns_4xx_for_bad_input(
+    client: FlaskClient, mocker: MockerFixture, err: ProjectError, code: int
 ):
     # given
     req = {"name": "any name", "public_key": _KEY.pem}
-    error = PublicKeyInvalidError()
+    error = err()
     mocker.patch.object(repo, "create_project_with_key", side_effect=error)
 
     # when
     res = client.post("projects", json=req)
 
     # then
-    assert res.status_code == HTTPStatus.BAD_REQUEST
+    assert res.status_code == code
     assert res.json == {"errors": [{"code": error.code, "message": error.message}]}
 
 
