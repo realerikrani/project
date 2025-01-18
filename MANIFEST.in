@@ -1,1 +1,2 @@
 exclude test/*
+include README.md LICENSE-Apache-2.0 LICENSE-MIT-pyjwt LICENSE-BSD-3-Clause-flask NOTICE
