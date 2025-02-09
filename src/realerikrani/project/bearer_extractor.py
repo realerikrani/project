@@ -1,5 +1,4 @@
 import logging
-from http import HTTPStatus
 from typing import TYPE_CHECKING
 
 from flask import request
@@ -24,16 +23,14 @@ def get_bearer() -> str:
         authorization_header = request.headers["Authorization"]
     except KeyError:
         raise ErrorGroup(
-            str(HTTPStatus.UNAUTHORIZED.value),
-            [Error(message="Header is missing", code="AUTH_HEADER_MISSING")],
+            "401", [Error(message="Header is missing", code="AUTH_HEADER_MISSING")]
         ) from None
 
     try:
         auth_scheme, bearer_token = authorization_header.split()
     except ValueError:
         raise ErrorGroup(
-            str(HTTPStatus.UNAUTHORIZED.value),
-            [Error(message="Header is invalid", code="AUTH_HEADER_INVALID")],
+            "401", [Error(message="Header is invalid", code="AUTH_HEADER_INVALID")]
         ) from None
 
     errors: list[Error] = []
@@ -50,7 +47,7 @@ def get_bearer() -> str:
         )
 
     if errors:
-        raise ErrorGroup(str(HTTPStatus.UNAUTHORIZED), errors)
+        raise ErrorGroup("401", errors)
 
     return bearer_token
 
@@ -60,21 +57,17 @@ def protect() -> "PublicKey":
         return project_service.read_key_by_token(get_bearer())
     except ProjectTokenKeyIdInvalidError:
         raise ErrorGroup(
-            str(HTTPStatus.UNAUTHORIZED),
-            [Error("Value of 'kid' is invalid", "KEY_ID_INVALID")],
+            "401", [Error("Value of 'kid' is invalid", "KEY_ID_INVALID")]
         ) from None
     except PublicKeyNotFoundError:
         raise ErrorGroup(
-            str(HTTPStatus.UNAUTHORIZED),
-            [Error("Key not found for 'kid'", "KEY_MISSING")],
+            "401", [Error("Key not found for 'kid'", "KEY_MISSING")]
         ) from None
     except ProjectTokenKeyIdNotFoundError:
         raise ErrorGroup(
-            str(HTTPStatus.UNAUTHORIZED),
-            [Error("Auth token has no 'kid'", "KEY_ID_MISSING")],
+            "401", [Error("Auth token has no 'kid'", "KEY_ID_MISSING")]
         ) from None
     except ProjectTokenError:
         raise ErrorGroup(
-            str(HTTPStatus.UNAUTHORIZED),
-            [Error("Auth token decoding issue", "TOKEN_INVALID")],
+            "401", [Error("Auth token decoding issue", "TOKEN_INVALID")]
         ) from None

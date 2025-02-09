@@ -1,5 +1,3 @@
-from http import HTTPStatus
-
 import pytest
 from flask import Flask
 from werkzeug.datastructures import Headers
@@ -26,7 +24,7 @@ def test_it_raises_error_for_missing_authorization_header(app: Flask):
 
     # then
     except ErrorGroup as error:
-        assert error.message == str(HTTPStatus.UNAUTHORIZED)
+        assert error.message == "401"
         assert len(error.exceptions) == 1
         assert error.exceptions[0].code == "AUTH_HEADER_MISSING"
         assert error.exceptions[0].message
@@ -48,7 +46,7 @@ def test_it_raises_error_for_non_2_part_authorization_header(
 
     # then
     except ErrorGroup as error:
-        assert error.message == str(HTTPStatus.UNAUTHORIZED)
+        assert error.message == "401"
         assert len(error.exceptions) == 1
         assert error.exceptions[0].code == "AUTH_HEADER_INVALID"
         assert error.exceptions[0].message
@@ -67,7 +65,7 @@ def test_it_raises_error_for_missing_bearer_in_authorization_header(app: Flask):
 
     # then
     except ErrorGroup as error:
-        assert error.message == str(HTTPStatus.UNAUTHORIZED)
+        assert error.message == "401"
         assert len(error.exceptions) == _EXPECTED_BEARER_PARTS_COUNT
         assert error.exceptions[0].code == "BEARER_MISSING"
         assert error.exceptions[0].message
