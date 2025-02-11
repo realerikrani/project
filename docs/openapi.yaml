@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Project API
-  version: 1.0.1
+  version: 1.0.*
   description: |
     Before creating a new project and registering its public key
 
@@ -109,6 +109,12 @@ paths:
                 properties:
                   project:
                     $ref: "#/components/schemas/Project"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorGroup"
         "404":
           description: Project not found
           content:
@@ -131,6 +137,12 @@ paths:
                 properties:
                   project:
                     $ref: "#/components/schemas/Project"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorGroup"
         "404":
           description: Project not found
           content:
@@ -168,6 +180,12 @@ paths:
                     type: string
         "400":
           description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorGroup"
+        "401":
+          description: Unauthorized
           content:
             application/json:
               schema:
@@ -231,6 +249,12 @@ paths:
                     type: string
                     nullable: true
                     description: A token for the next page of results; null if no next page exists
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorGroup"
         "400":
           description: Bad request
           content:
@@ -261,6 +285,12 @@ paths:
                 properties:
                   kid:
                     type: string
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorGroup"
         "404":
           description: Public key not found
           content:
