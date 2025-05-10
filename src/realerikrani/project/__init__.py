@@ -4,6 +4,7 @@ from . import service as project_service
 from .app import register_project
 from .error import (
     ProjectError,
+    ProjectNotFoundError,
     ProjectTokenError,
     ProjectTokenKeyIdInvalidError,
     ProjectTokenKeyIdNotFoundError,
@@ -14,6 +15,7 @@ from .model import Project, PublicKey
 __all__ = [
     "Project",
     "ProjectError",
+    "ProjectNotFoundError",
     "ProjectTokenError",
     "ProjectTokenKeyIdInvalidError",
     "ProjectTokenKeyIdNotFoundError",
