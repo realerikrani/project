@@ -36,6 +36,8 @@ lint.per-file-ignores = {"__init__*" = [
     "ANN201", # Missing return type annotation for public function `mongo_uri`"
     "PT004",  # Fixture `protect` does not return anything, add leading underscore
     "S113", # Probable use of requests call without timeout
+    "F403", # star-import -- unable to detect undefined names
+    "F405", # star-import    "F405", # star-import
 ], "blueprint*" = [
 "ANN201",  # Missing return type annotation for public function `create_project_with_key`
 ]}
