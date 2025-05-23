@@ -1,495 +1,483 @@
 {
-  "openapi": "3.0.3",
-  "info": {
-    "title": "Project API",
-    "version": "1.0.*",
-    "description": "Before creating a new project and registering its public key\n\n1. Generate RSA private key `openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:4096`\n2. Extract the public key `openssl rsa -pubout -in private_key.pem -out public_key.pem`\n3. Get the public key's content as a single string with `awk '{printf \"%s\\\\n\", $0}' public_key.pem | sed 's/\\\\n$//'`\n"
+  "openapi" : "3.0.3",
+  "info" : {
+    "description" : "Read the [documentation wiki](https://github.com/realerikrani/project/wiki).",
+    "title" : "Project API",
+    "version" : "1.0.*"
   },
-  "tags": [
-    {
-      "name": "projects",
-      "description": "Things people work on"
-    },
-    {
-      "name": "keys",
-      "description": "Public keys of projects"
-    }
-  ],
-  "servers": [
-    {
-      "url": "http://127.0.0.1:{port}",
-      "description": "Local development server",
-      "variables": {
-        "port": {
-          "default": "5000",
-          "enum": [
-            "5000",
-            "8080",
-            "3000"
-          ]
-        }
+  "servers" : [ {
+    "description" : "Local development server",
+    "url" : "http://127.0.0.1:{port}",
+    "variables" : {
+      "port" : {
+        "default" : "5000",
+        "enum" : [ "3000", "5000", "8080" ]
       }
     }
-  ],
-  "paths": {
-    "/projects": {
-      "post": {
-        "summary": "Create a new project with a public key",
-        "tags": [
-          "projects"
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "minLength": 1,
-                    "maxLength": 100,
-                    "example": "Demo project name"
-                  },
-                  "public_key": {
-                    "type": "string",
-                    "pattern": "^-----BEGIN PUBLIC KEY-----[\\\\s\\\\S]*-----END PUBLIC KEY-----$",
-                    "description": "The public key in PEM format.",
-                    "example": "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEArjs/EcBLWLXMB9PiOgal\nZMvP05T2zq6aksf+hQrZoSsVOeuIdr8JC6fbBrQeXKzfxSU39TdgLG16I4dgyMpP\nhwPpyapbU79mqZ6Edxi9WrqspUaks8A9s/BPiTN31nTOoFKydRHO6NXXPmkLHRgG\n3GFcEYr0KRT+Aj7LGPDZeFSC4zX5vBl6nUo1J4B0YNdu0CSO0JoUfjZ6YOaZngK1\n0JmiwxAcuR7CaouyfmML2b2qRP0qRckL/afxRXsUx5bdiw6swbVIt4W0K4/7Hjw7\nX30ALE3m1pnkfTd5nC2szPWZaAWVv+XRzHgwjtzdXQVw/sx3sHvjs7SuEd+uS/7C\nQxtMxEeS4EI2+d+w6jKRk1Cbv5abFp+gzngMzbmdOr3aIibT6QkqUgsz/9X0gQ7b\n92Gl7hPDgyGgZYoi3kJRuQsKCyEfJipe1g4QBMv+iYkR67l1geTjDPrnGQz5GSC+\nojcsFXecJtBFgU3Mw4LtvP7ZEwhn+DjMpQZ7RjenNxAep86CcyT/TdT1mRH1nCZo\n2IoCD9xcM0sgtWtxJeicxJ7qRjUvTrmTlSd2+kef0Ycb2kCwTB7iCrgIEhYdt2CF\nHfNBHMMVduJf/RTV0cPXf041cLyHYEzpZnrQ4FWcXLoBWjzGmiaT+TggiyEkro0j\nHR57xlAN43ucGD3PtjwJaOcCAwEAAQ==\n-----END PUBLIC KEY-----\n"
-                  }
-                },
-                "required": [
-                  "name",
-                  "public_key"
-                ]
+  } ],
+  "tags" : [ {
+    "description" : "Things people work on",
+    "name" : "projects"
+  }, {
+    "description" : "Public keys of projects",
+    "name" : "keys"
+  } ],
+  "paths" : {
+    "/projects" : {
+      "delete" : {
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/_projects_get_200_response"
+                }
               }
-            }
+            },
+            "description" : "Project deleted successfully"
+          },
+          "401" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorGroup"
+                }
+              }
+            },
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorGroup"
+                }
+              }
+            },
+            "description" : "Project not found"
           }
         },
-        "responses": {
-          "201": {
-            "description": "Project created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "kid": {
-                      "type": "string",
-                      "format": "uuid",
-                      "description": "The registered id of the public key",
-                      "example": "721a0653-413a-4f88-9700-a12f1dea355f"
-                    },
-                    "project": {
-                      "$ref": "#/components/schemas/Project"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorGroup"
-                }
-              }
-            }
-          },
-          "409": {
-            "description": "The public key is already registered",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorGroup"
-                }
-              }
-            }
-          }
-        }
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "summary" : "Delete a project",
+        "tags" : [ "projects" ]
       },
-      "get": {
-        "summary": "Read a project",
-        "tags": [
-          "projects"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Project retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "project": {
-                      "$ref": "#/components/schemas/Project"
-                    }
-                  }
+      "get" : {
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/_projects_get_200_response"
                 }
               }
-            }
+            },
+            "description" : "Project retrieved successfully"
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorGroup"
+          "401" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorGroup"
                 }
               }
-            }
+            },
+            "description" : "Unauthorized"
           },
-          "404": {
-            "description": "Project not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorGroup"
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorGroup"
                 }
               }
-            }
-          }
-        }
-      },
-      "delete": {
-        "summary": "Delete a project",
-        "tags": [
-          "projects"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Project deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "project": {
-                      "$ref": "#/components/schemas/Project"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorGroup"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Project not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorGroup"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/keys": {
-      "post": {
-        "summary": "Create a new key for a project",
-        "tags": [
-          "keys"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "public_key": {
-                    "type": "string"
-                  }
-                },
-                "required": [
-                  "public_key"
-                ]
-              }
-            }
+            },
+            "description" : "Project not found"
           }
         },
-        "responses": {
-          "201": {
-            "description": "Key created successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "kid": {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorGroup"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorGroup"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Project not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorGroup"
-                }
-              }
-            }
-          }
-        }
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "summary" : "Read a project",
+        "tags" : [ "projects" ]
       },
-      "get": {
-        "summary": "Read keys of the project",
-        "tags": [
-          "keys"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "name": "page_size",
-            "description": "The amount of keys to fetch at a time.\nEither page size or page token must be provided.\n",
-            "in": "query",
-            "schema": {
-              "type": "integer"
-            }
-          },
-          {
-            "name": "page_token",
-            "description": "The encoded info for loading next page of keys.\nEither page size or page token must be provided.\n",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Keys retrieved successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "keys": {
-                      "type": "array",
-                      "items": {
-                        "type": "object",
-                        "properties": {
-                          "created_at": {
-                            "type": "string",
-                            "format": "date-time",
-                            "description": "The timestamp when the key was created"
-                          },
-                          "id": {
-                            "type": "string",
-                            "format": "uuid",
-                            "description": "The unique identifier for the key"
-                          },
-                          "pem": {
-                            "type": "string",
-                            "description": "The public key in PEM format"
-                          },
-                          "project_id": {
-                            "type": "string",
-                            "format": "uuid",
-                            "description": "The unique identifier for the project associated with the key"
-                          }
-                        }
-                      }
-                    },
-                    "next_page_token": {
-                      "type": "string",
-                      "nullable": true,
-                      "description": "A token for the next page of results; null if no next page exists"
-                    }
-                  }
-                }
+      "post" : {
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/_projects_post_request"
               }
             }
           },
-          "400": {
-            "description": "Bad request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorGroup"
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/_projects_post_201_response"
                 }
               }
-            }
+            },
+            "description" : "Project created successfully"
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorGroup"
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorGroup"
                 }
               }
-            }
+            },
+            "description" : "Bad request"
+          },
+          "409" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorGroup"
+                }
+              }
+            },
+            "description" : "The public key is already registered"
           }
-        }
+        },
+        "summary" : "Create a new project with a public key",
+        "tags" : [ "projects" ]
       }
     },
-    "/keys/{id}": {
-      "delete": {
-        "summary": "Delete a key",
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "tags": [
-          "keys"
-        ],
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "format": "uuid"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Key deleted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "kid": {
-                      "type": "string"
-                    }
-                  }
+    "/keys" : {
+      "get" : {
+        "parameters" : [ {
+          "description" : "The amount of keys to fetch at a time.\nEither page size or page token must be provided.\n",
+          "explode" : true,
+          "in" : "query",
+          "name" : "page_size",
+          "required" : false,
+          "schema" : {
+            "type" : "integer"
+          },
+          "style" : "form"
+        }, {
+          "description" : "The encoded info for loading next page of keys.\nEither page size or page token must be provided.\n",
+          "explode" : true,
+          "in" : "query",
+          "name" : "page_token",
+          "required" : false,
+          "schema" : {
+            "type" : "string"
+          },
+          "style" : "form"
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/_keys_get_200_response"
                 }
+              }
+            },
+            "description" : "Keys retrieved successfully"
+          },
+          "401" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorGroup"
+                }
+              }
+            },
+            "description" : "Unauthorized"
+          },
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorGroup"
+                }
+              }
+            },
+            "description" : "Bad request"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "summary" : "Read keys of the project",
+        "tags" : [ "keys" ]
+      },
+      "post" : {
+        "requestBody" : {
+          "content" : {
+            "application/json" : {
+              "schema" : {
+                "$ref" : "#/components/schemas/_keys_post_request"
               }
             }
           },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorGroup"
+          "required" : true
+        },
+        "responses" : {
+          "201" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/_keys_post_201_response"
                 }
               }
-            }
+            },
+            "description" : "Key created successfully"
           },
-          "404": {
-            "description": "Public key not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ErrorGroup"
+          "400" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorGroup"
                 }
               }
-            }
+            },
+            "description" : "Bad request"
+          },
+          "401" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorGroup"
+                }
+              }
+            },
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorGroup"
+                }
+              }
+            },
+            "description" : "Project not found"
+          },
+          "409" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorGroup"
+                }
+              }
+            },
+            "description" : "Key already exists"
           }
-        }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "summary" : "Create a new key for a project",
+        "tags" : [ "keys" ]
+      }
+    },
+    "/keys/{id}" : {
+      "delete" : {
+        "parameters" : [ {
+          "explode" : false,
+          "in" : "path",
+          "name" : "id",
+          "required" : true,
+          "schema" : {
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "style" : "simple"
+        } ],
+        "responses" : {
+          "200" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/_keys_post_201_response"
+                }
+              }
+            },
+            "description" : "Key deleted successfully"
+          },
+          "401" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorGroup"
+                }
+              }
+            },
+            "description" : "Unauthorized"
+          },
+          "404" : {
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ErrorGroup"
+                }
+              }
+            },
+            "description" : "Public key not found"
+          }
+        },
+        "security" : [ {
+          "bearerAuth" : [ ]
+        } ],
+        "summary" : "Delete a key",
+        "tags" : [ "keys" ]
       }
     }
   },
-  "components": {
-    "securitySchemes": {
-      "bearerAuth": {
-        "type": "http",
-        "scheme": "bearer",
-        "bearerFormat": "JWT",
-        "description": "The Bearer token can be created using the following steps.\n\n```bash\n# Install pip dependency\npip install \"PyJWT[crypto]\"\n```\n\nCreate a Python file\n```python\nfrom datetime import UTC, datetime, timedelta\nfrom pathlib import Path\nfrom uuid import UUID\n\nimport jwt\n\nif __name__ == \"__main__\":\n    pem = input(\"Enter path of private PEM file: \")\n\n    with Path(pem).open() as pem_file:\n        key_bytes = pem_file.read()\n        private_key = key_bytes\n\n    project_id = UUID(input(\"Enter project id: \"))\n    public_key_id = UUID(input(\"Enter public key id (kid): \"))\n\n    print(  # noqa: T201\n        jwt.encode(\n            payload={\n                \"iat\": datetime.now(tz=UTC),\n                \"exp\": datetime.now(tz=UTC) + timedelta(minutes=5),\n                \"iss\": str(project_id),\n            },\n            key=private_key,\n            algorithm=\"RS256\",\n            headers={\"kid\": str(public_key_id)},\n        ),\n    )\n\n```\n\nRun the Python file using your private key PEM location, project id and the corresponding public key's ID returned by the API after registering the public key.\n\n```bash\npython3 your_file_name.py\n```\n\nUse the obtained bearer value for authorization.\n"
+  "components" : {
+    "schemas" : {
+      "Error" : {
+        "properties" : {
+          "message" : {
+            "type" : "string"
+          },
+          "code" : {
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "ErrorGroup" : {
+        "properties" : {
+          "status" : {
+            "type" : "string"
+          },
+          "errors" : {
+            "items" : {
+              "$ref" : "#/components/schemas/Error"
+            },
+            "type" : "array"
+          }
+        },
+        "type" : "object"
+      },
+      "Project" : {
+        "properties" : {
+          "id" : {
+            "example" : "18c64064-b83e-45b6-ba68-ef681d06bb09",
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "name" : {
+            "example" : "Demo project name",
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "_projects_get_200_response" : {
+        "properties" : {
+          "project" : {
+            "$ref" : "#/components/schemas/Project"
+          }
+        },
+        "type" : "object"
+      },
+      "_projects_post_request" : {
+        "properties" : {
+          "name" : {
+            "example" : "Demo project name",
+            "maxLength" : 100,
+            "minLength" : 1,
+            "type" : "string"
+          },
+          "public_key" : {
+            "description" : "The public key in PEM format.",
+            "example" : "-----BEGIN PUBLIC KEY-----\nMIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEArjs/EcBLWLXMB9PiOgal\nZMvP05T2zq6aksf+hQrZoSsVOeuIdr8JC6fbBrQeXKzfxSU39TdgLG16I4dgyMpP\nhwPpyapbU79mqZ6Edxi9WrqspUaks8A9s/BPiTN31nTOoFKydRHO6NXXPmkLHRgG\n3GFcEYr0KRT+Aj7LGPDZeFSC4zX5vBl6nUo1J4B0YNdu0CSO0JoUfjZ6YOaZngK1\n0JmiwxAcuR7CaouyfmML2b2qRP0qRckL/afxRXsUx5bdiw6swbVIt4W0K4/7Hjw7\nX30ALE3m1pnkfTd5nC2szPWZaAWVv+XRzHgwjtzdXQVw/sx3sHvjs7SuEd+uS/7C\nQxtMxEeS4EI2+d+w6jKRk1Cbv5abFp+gzngMzbmdOr3aIibT6QkqUgsz/9X0gQ7b\n92Gl7hPDgyGgZYoi3kJRuQsKCyEfJipe1g4QBMv+iYkR67l1geTjDPrnGQz5GSC+\nojcsFXecJtBFgU3Mw4LtvP7ZEwhn+DjMpQZ7RjenNxAep86CcyT/TdT1mRH1nCZo\n2IoCD9xcM0sgtWtxJeicxJ7qRjUvTrmTlSd2+kef0Ycb2kCwTB7iCrgIEhYdt2CF\nHfNBHMMVduJf/RTV0cPXf041cLyHYEzpZnrQ4FWcXLoBWjzGmiaT+TggiyEkro0j\nHR57xlAN43ucGD3PtjwJaOcCAwEAAQ==\n-----END PUBLIC KEY-----\n",
+            "pattern" : "^-----BEGIN PUBLIC KEY-----[\\\\s\\\\S]*-----END PUBLIC KEY-----$",
+            "type" : "string"
+          }
+        },
+        "required" : [ "name", "public_key" ],
+        "type" : "object"
+      },
+      "_projects_post_201_response" : {
+        "properties" : {
+          "kid" : {
+            "description" : "The registered id of the public key",
+            "example" : "721a0653-413a-4f88-9700-a12f1dea355f",
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "project" : {
+            "$ref" : "#/components/schemas/Project"
+          }
+        },
+        "type" : "object"
+      },
+      "_keys_get_200_response_keys_inner" : {
+        "properties" : {
+          "created_at" : {
+            "description" : "The timestamp when the key was created",
+            "format" : "date-time",
+            "type" : "string"
+          },
+          "id" : {
+            "description" : "The unique identifier for the key",
+            "format" : "uuid",
+            "type" : "string"
+          },
+          "pem" : {
+            "description" : "The public key in PEM format",
+            "type" : "string"
+          },
+          "project_id" : {
+            "description" : "The unique identifier for the project associated with the key",
+            "format" : "uuid",
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "_keys_get_200_response" : {
+        "properties" : {
+          "keys" : {
+            "items" : {
+              "$ref" : "#/components/schemas/_keys_get_200_response_keys_inner"
+            },
+            "type" : "array"
+          },
+          "next_page_token" : {
+            "description" : "A token for the next page of results; null if no next page exists",
+            "nullable" : true,
+            "type" : "string"
+          }
+        },
+        "type" : "object"
+      },
+      "_keys_post_request" : {
+        "properties" : {
+          "public_key" : {
+            "type" : "string"
+          }
+        },
+        "required" : [ "public_key" ],
+        "type" : "object"
+      },
+      "_keys_post_201_response" : {
+        "properties" : {
+          "kid" : {
+            "type" : "string"
+          }
+        },
+        "type" : "object"
       }
     },
-    "schemas": {
-      "Error": {
-        "type": "object",
-        "properties": {
-          "message": {
-            "type": "string"
-          },
-          "code": {
-            "type": "string"
-          }
-        }
-      },
-      "ErrorGroup": {
-        "type": "object",
-        "properties": {
-          "status": {
-            "type": "string"
-          },
-          "errors": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
-      "Project": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string",
-            "format": "uuid",
-            "example": "18c64064-b83e-45b6-ba68-ef681d06bb09"
-          },
-          "name": {
-            "type": "string",
-            "example": "Demo project name"
-          }
-        }
+    "securitySchemes" : {
+      "bearerAuth" : {
+        "bearerFormat" : "JWT",
+        "description" : "Use the\n[generated bearer value](https://github.com/realerikrani/project/wiki/How%E2%80%90to%E2%80%90guide:-Generate-Private-Key-JWT)\nfor authorization.\n",
+        "scheme" : "bearer",
+        "type" : "http"
       }
     }
   }
