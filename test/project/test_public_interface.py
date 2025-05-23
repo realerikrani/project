@@ -3,11 +3,14 @@ from realerikrani.project import *
 
 def test_it_exports_error_classes():
     assert ProjectError
+    assert ProjectNameError
     assert ProjectNotFoundError
     assert ProjectTokenError
+    assert PublicKeyDuplicateError
     assert ProjectTokenKeyIdInvalidError
     assert ProjectTokenKeyIdNotFoundError
     assert PublicKeyNotFoundError
+    assert PublicKeyInvalidError
 
 
 def test_it_exports_regular_classes():
