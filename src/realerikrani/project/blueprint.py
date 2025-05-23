@@ -73,7 +73,8 @@ def create_new_key():  # type: ignore[no-untyped-def]
         raise ErrorGroup("404", [Error(pe.message, pe.code)]) from None
     except PublicKeyInvalidError as e:
         raise ErrorGroup("400", [Error(e.message, e.code)]) from None
-
+    except PublicKeyDuplicateError as pkde:
+        raise ErrorGroup("409", [Error(pkde.message, pkde.code)]) from None
     return {"kid": key.id}, 201
 
 

@@ -2,12 +2,7 @@ openapi: 3.0.3
 info:
   title: Project API
   version: 1.0.*
-  description: |
-    Before creating a new project and registering its public key
-
-    1. Generate RSA private key `openssl genpkey -algorithm RSA -out private_key.pem -pkeyopt rsa_keygen_bits:4096`
-    2. Extract the public key `openssl rsa -pubout -in private_key.pem -out public_key.pem`
-    3. Get the public key's content as a single string with `awk '{printf "%s\\n", $0}' public_key.pem | sed 's/\\n$//'`
+  description: Read the [documentation wiki](https://github.com/realerikrani/project/wiki).
 
 tags:
   - name: projects
@@ -22,9 +17,9 @@ servers:
       port:
         default: "5000"
         enum:
+          - "3000"
           - "5000"
           - "8080"
-          - "3000"
 
 paths:
   /projects:
@@ -196,6 +191,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/ErrorGroup"
+        "409":
+          description: Key already exists
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorGroup"
     get:
       summary: Read keys of the project
       tags:
@@ -305,53 +306,9 @@ components:
       scheme: bearer
       bearerFormat: JWT
       description: |
-        The Bearer token can be created using the following steps.
-
-        ```bash
-        # Install pip dependency
-        pip install "PyJWT[crypto]"
-        ```
-
-        Create a Python file
-        ```python
-        from datetime import UTC, datetime, timedelta
-        from pathlib import Path
-        from uuid import UUID
-
-        import jwt
-
-        if __name__ == "__main__":
-            pem = input("Enter path of private PEM file: ")
-
-            with Path(pem).open() as pem_file:
-                key_bytes = pem_file.read()
-                private_key = key_bytes
-
-            project_id = UUID(input("Enter project id: "))
-            public_key_id = UUID(input("Enter public key id (kid): "))
-
-            print(  # noqa: T201
-                jwt.encode(
-                    payload={
-                        "iat": datetime.now(tz=UTC),
-                        "exp": datetime.now(tz=UTC) + timedelta(minutes=5),
-                        "iss": str(project_id),
-                    },
-                    key=private_key,
-                    algorithm="RS256",
-                    headers={"kid": str(public_key_id)},
-                ),
-            )
-
-        ```
-
-        Run the Python file using your private key PEM location, project id and the corresponding public key's ID returned by the API after registering the public key.
-
-        ```bash
-        python3 your_file_name.py
-        ```
-
-        Use the obtained bearer value for authorization.
+        Use the
+        [generated bearer value](https://github.com/realerikrani/project/wiki/How%E2%80%90to%E2%80%90guide:-Generate-Private-Key-JWT)
+        for authorization.
   schemas:
     Error:
       type: object

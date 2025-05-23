@@ -150,39 +150,24 @@ def test_it_creates_new_key(client: FlaskClient, mocker: MockerFixture):
 
 
 @pytest.mark.usefixtures("protect")
-def test_it_creates_no_new_key_for_missing_project(
-    client: FlaskClient, mocker: MockerFixture
+@pytest.mark.parametrize(
+    ("err", "code"),
+    [
+        (ProjectNotFoundError, 404),
+        (PublicKeyInvalidError, 400),
+        (PublicKeyDuplicateError, 409),
+    ],
+)
+def test_creating_key_returns_4xx_for_bad_input(
+    client: FlaskClient, mocker: MockerFixture, err: ProjectError, code: int
 ):
     # given
-    error = ProjectNotFoundError()
-    mocker.patch.object(repo, "create_key", side_effect=error)
+    error = err()
+    mocker.patch.object(service, "create_key", side_effect=error)
 
     # when
     res = client.post("keys", json={"public_key": _KEY.pem})
 
     # then
-    assert res.status_code == HTTPStatus.NOT_FOUND
+    assert res.status_code == code
     assert res.json == {"errors": [{"code": error.code, "message": error.message}]}
-
-
-@pytest.mark.usefixtures("protect")
-def test_it_creates_no_new_key_for_invalid_key(
-    client: FlaskClient, mocker: MockerFixture
-):
-    # given
-    error = PublicKeyInvalidError()
-    mocker.patch.object(service, "create_key", side_effect=error)
-
-    # when
-    res = client.post("keys", json={"public_key": "a key"})
-
-    # then
-    assert res.status_code == HTTPStatus.BAD_REQUEST
-    assert res.json == {
-        "errors": [
-            {
-                "code": error.code,
-                "message": error.message,
-            },
-        ]
-    }
