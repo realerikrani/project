@@ -25,7 +25,7 @@ pin:
 .PHONY: install
 install:
 	python3 -m pip install --only-binary :all: --upgrade pip wheel
-	python3 -m pip install --only-binary :all: --require-hashes -r requirements/dev.txt -r requirements/prod.txt
+	python3 -m piptools sync --pip-args "--only-binary :all: --require-hashes" requirements/dev.txt requirements/prod.txt
 	python3 -m pip check
 
 .PHONY: build
