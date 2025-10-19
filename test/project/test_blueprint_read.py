@@ -9,8 +9,8 @@ import pytest
 from flask import Flask
 from flask.testing import FlaskClient
 from pytest_mock import MockerFixture
-
 from realerikrani.base64token import encode
+
 from realerikrani.project import bearer_extractor
 from realerikrani.project.app import register_project
 from realerikrani.project.blueprint import repo

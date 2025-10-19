@@ -2,8 +2,8 @@ import logging
 from typing import TYPE_CHECKING
 
 from flask import request
-
 from realerikrani.flaskapierr import Error, ErrorGroup
+
 from realerikrani.project import service as project_service
 from realerikrani.project.error import (
     ProjectTokenError,

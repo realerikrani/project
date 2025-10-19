@@ -1,8 +1,8 @@
 import pytest
 from flask import Flask
+from realerikrani.flaskapierr import ErrorGroup
 from werkzeug.datastructures import Headers
 
-from realerikrani.flaskapierr import ErrorGroup
 from realerikrani.project.app import register_project
 from realerikrani.project.bearer_extractor import get_bearer
 

@@ -1,9 +1,9 @@
 from uuid import UUID
 
 from flask import Blueprint, request
-
 from realerikrani.base64token import encode
 from realerikrani.flaskapierr import Error, ErrorGroup
+
 from realerikrani.project import bearer_extractor, payload_converter
 from realerikrani.project.error import (
     ProjectNameError,

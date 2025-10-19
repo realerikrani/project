@@ -2,9 +2,9 @@ from datetime import datetime
 
 from flask import Flask
 from flask.json.provider import DefaultJSONProvider
+from realerikrani.flaskapierr import handle_error
 from werkzeug.routing import UUIDConverter
 
-from realerikrani.flaskapierr import handle_error
 from realerikrani.project.blueprint import key_blueprint, project_blueprint
 
 

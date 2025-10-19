@@ -18,12 +18,13 @@ lint:
 
 .PHONY: pin
 pin:
-	python3 -m pip install --only-binary :all: --upgrade pip-tools 'pip < 25.1' wheel setuptools
+	python3 -m pip install --only-binary :all: --upgrade pip-tools pip wheel setuptools
 	python3 -m piptools compile --strip-extras --quiet --generate-hashes --upgrade requirements/prod.in -o requirements/prod.txt
 	python3 -m piptools compile --strip-extras --quiet --generate-hashes --upgrade requirements/dev.in -o requirements/dev.txt
 
 .PHONY: install
 install:
+	python3 -m pip install --only-binary :all: --upgrade pip wheel
 	python3 -m pip install --only-binary :all: --require-hashes -r requirements/dev.txt -r requirements/prod.txt
 	python3 -m pip check
 
