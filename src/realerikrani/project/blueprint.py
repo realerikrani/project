@@ -51,7 +51,7 @@ def to_name_key(req: dict) -> tuple[str, str]:
 
 @project_blueprint.route("", methods=["POST"])
 def create_project_with_key():  # type: ignore[no-untyped-def]
-    name, public_key = to_name_key(dict(request.json))  # type: ignore[arg-type]
+    name, public_key = to_name_key(dict(request.json))
     try:
         project, key = service.create_project_with_key(name, public_key)
     except (PublicKeyInvalidError, ProjectNameError) as bad_err:
@@ -66,7 +66,7 @@ def create_project_with_key():  # type: ignore[no-untyped-def]
 @key_blueprint.route("", methods=["POST"])
 def create_new_key():  # type: ignore[no-untyped-def]
     current_key = bearer_extractor.protect()
-    public_key = extract_public_key(dict(request.json))  # type: ignore[arg-type]
+    public_key = extract_public_key(dict(request.json))
     try:
         key = service.create_key(current_key.project_id, public_key)
     except ProjectNotFoundError as pe:
