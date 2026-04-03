@@ -5,5 +5,5 @@ pytest-cov
 pytest-mock
 requests==2.*
 types-requests==2.*
-realerikrani-pysteptest==1.*
+realerikrani-pysteptest==2.*
 -c prod.txt

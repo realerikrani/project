@@ -14,8 +14,8 @@ def register_project(app: Flask) -> Flask:
     app.register_blueprint(key_blueprint, url_prefix="/keys")
     app.register_error_handler(Exception, handle_error)
     app.json = DefaultJSONProvider(app)
-    app.json.default = (
-        lambda obj: obj.isoformat()
+    app.json.default = lambda obj: (
+        obj.isoformat()
         if isinstance(obj, datetime)
         else DefaultJSONProvider.default(obj)
     )
