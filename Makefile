@@ -18,14 +18,16 @@ lint:
 
 .PHONY: pin
 pin:
-	python3 -m pip install --only-binary :all: --upgrade pip-tools pip wheel setuptools
+	# https://github.com/jazzband/pip-tools/issues/2379
+	python3 -m pip install --only-binary :all: --upgrade pip-tools 'pip < 26.1' wheel setuptools
 	python3 -m piptools compile --strip-extras --quiet --generate-hashes --upgrade requirements/prod.in -o requirements/prod.txt
 	python3 -m piptools compile --strip-extras --quiet --generate-hashes --upgrade requirements/dev.in -o requirements/dev.txt
 
 .PHONY: install
 install:
-	python3 -m pip install --only-binary :all: --upgrade pip wheel
-	python3 -m piptools sync --pip-args "--only-binary :all: --require-hashes" requirements/dev.txt requirements/prod.txt
+	# https://cryptography.io/en/latest/changelog/#v49-0-0
+	python3 -m piptools sync --pip-args "--only-binary :all: --no-binary cryptography --require-hashes" \
+  requirements/dev.txt requirements/prod.txt
 	python3 -m pip check
 
 .PHONY: build

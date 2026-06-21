@@ -1,4 +1,5 @@
 import os
+from collections.abc import Generator
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from pathlib import Path
@@ -111,7 +112,8 @@ class TestProjects:
 @pytest.mark.pysteptest
 class TestKeys:
     @pytest.fixture(autouse=True, scope="class")
-    def after_class(self, key_ctx: KeyCtx):
+    @classmethod
+    def after_class(cls, key_ctx: KeyCtx) -> Generator[None]:
         yield
         requests.delete(f"{DOMAIN}/projects", headers=key_ctx.auth)
 
