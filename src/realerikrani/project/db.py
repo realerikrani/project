@@ -7,8 +7,12 @@ CREATE TABLE IF NOT EXISTS project (
     id TEXT NOT NULL CHECK(
         length("id") = 36
     ),
+    created_at_us INTEGER NOT NULL,
     PRIMARY KEY(id) ON CONFLICT FAIL
 ) WITHOUT ROWID;
+
+CREATE INDEX IF NOT EXISTS project_page_idx
+ON project(created_at_us DESC, id DESC);
 
 CREATE TABLE IF NOT EXISTS public_key (
     pem TEXT NOT NULL UNIQUE CHECK(
@@ -26,4 +30,10 @@ CREATE TABLE IF NOT EXISTS public_key (
 
 CREATE UNIQUE INDEX IF NOT EXISTS idx_public_key_project_id_created_at
 ON public_key(project_id, created_at DESC);
+
+CREATE TABLE group_project (
+    group_id TEXT NOT NULL,
+    project_id TEXT NOT NULL REFERENCES project(id) ON DELETE CASCADE,
+    PRIMARY KEY (group_id, project_id)
+) WITHOUT ROWID;
 """

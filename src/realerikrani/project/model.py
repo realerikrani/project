@@ -7,6 +7,7 @@ from uuid import UUID
 class Project:
     name: str
     id: UUID
+    created_at_us: int
 
 
 @dataclass(slots=True)

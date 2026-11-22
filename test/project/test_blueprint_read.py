@@ -2,6 +2,7 @@ import base64
 from dataclasses import asdict
 from datetime import UTC, datetime
 from http import HTTPStatus
+from time import time_ns
 from typing import Any
 from uuid import uuid4
 
@@ -74,7 +75,7 @@ def protect(mocker: MockerFixture):
 @pytest.mark.usefixtures("protect")
 def test_it_reads_project(client: FlaskClient, mocker: MockerFixture):
     # given
-    project = Project("name", _PROJECT_ID)
+    project = Project("name", _PROJECT_ID, time_ns())
     read_project = mocker.patch.object(repo, "read_project", return_value=project)
 
     # when
