@@ -103,3 +103,30 @@ def read_keys(
             ("page_size", page_size),
         ]
     return keys, next_token
+
+
+def read_projects(
+    group_id: UUID, page_size: int, data: list[tuple[str, Any]]
+) -> tuple[list[Project], list[tuple[str, Any]] | None]:
+    if not data:
+        projects = repo.read_first_projects(group_id, page_size + 1)
+    else:
+        cursor = dict(data)
+        projects = repo.read_next_projects(
+            group_id,
+            page_size + 1,
+            int(cursor["created_at_us"]),
+            UUID(cursor["id"]),
+        )
+
+    next_token = None
+    if len(projects) == page_size + 1:
+        projects = projects[:-1]
+        last_project = projects[-1]
+        next_token = [
+            ("created_at_us", last_project.created_at_us),
+            ("id", str(last_project.id)),
+            ("page_size", page_size),
+        ]
+
+    return projects, next_token

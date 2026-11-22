@@ -1,6 +1,7 @@
 from dataclasses import asdict
 from datetime import UTC, datetime
 from http import HTTPStatus
+from time import time_ns
 from uuid import uuid4
 
 import pytest
@@ -42,7 +43,7 @@ def protect(mocker: MockerFixture):
 @pytest.mark.usefixtures("protect")
 def test_it_deletes_project(client: FlaskClient, mocker: MockerFixture):
     # given
-    project = Project("name", _PROJECT_ID)
+    project = Project("name", _PROJECT_ID, time_ns())
     delete_project = mocker.patch.object(repo, "delete_project", return_value=project)
 
     # when

@@ -10,11 +10,14 @@ from realerikrani.project.error import (
     PublicKeyNotFoundError,
 )
 from realerikrani.project.repo import (
+    add_project_to_group,
     create_key,
     create_project_with_key,
     read_first_keys,
+    read_first_projects,
     read_key,
     read_next_keys,
+    read_next_projects,
     read_project,
 )
 
@@ -101,3 +104,57 @@ def test_it_reads_next_public_keys_by_project():
 
     # then
     assert result == [key2, key1]
+
+
+@pytest.mark.usefixtures("_clean_db")
+def test_it_reads_first_projects():
+    # given
+    group_id1 = uuid4()
+    group_id2 = uuid4()
+    project1, _ = create_project_with_key("p name1", "pem1")
+    project2, _ = create_project_with_key("p name2", "pem2")
+    project3, _ = create_project_with_key("p name3", "pem3")
+    project4, _ = create_project_with_key("p name4", "pem4")
+    project5, _ = create_project_with_key("p name5", "pem5")
+    add_project_to_group(group_id1, project1.id)
+    add_project_to_group(group_id1, project2.id)
+    add_project_to_group(group_id1, project3.id)
+    add_project_to_group(group_id2, project4.id)
+    add_project_to_group(group_id2, project5.id)
+
+    # when
+    result_group1 = read_first_projects(group_id1, size=2)
+    result_group2 = read_first_projects(group_id2, size=2)
+
+    # then
+    assert result_group1 == [project3, project2]
+    assert result_group2 == [project5, project4]
+
+
+@pytest.mark.usefixtures("_clean_db")
+def test_it_reads_next_projects():
+    # given
+    group_id1 = uuid4()
+    group_id2 = uuid4()
+    project1, _ = create_project_with_key("p name1", "pem1")
+    project2, _ = create_project_with_key("p name2", "pem2")
+    project3, _ = create_project_with_key("p name3", "pem3")
+    project4, _ = create_project_with_key("p name4", "pem4")
+    project5, _ = create_project_with_key("p name5", "pem5")
+    add_project_to_group(group_id1, project1.id)
+    add_project_to_group(group_id1, project2.id)
+    add_project_to_group(group_id1, project3.id)
+    add_project_to_group(group_id2, project4.id)
+    add_project_to_group(group_id2, project5.id)
+
+    # when
+    result_group1 = read_next_projects(
+        group_id1, 2, project2.created_at_us, project3.id
+    )
+    result_group2 = read_next_projects(
+        group_id2, 2, project2.created_at_us, project4.id
+    )
+
+    # then
+    assert result_group1 == [project2, project1]
+    assert result_group2 == []

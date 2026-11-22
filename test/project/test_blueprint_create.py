@@ -1,5 +1,6 @@
 from datetime import UTC, datetime
 from http import HTTPStatus
+from time import time_ns
 from unittest.mock import Mock
 from uuid import uuid4
 
@@ -72,7 +73,7 @@ def test_it_creates_project_and_key(client: FlaskClient, mocker: MockerFixture):
     # given
     name = "project1"
     req = {"name": name, "public_key": _KEY.pem}
-    created_project = Project(name, uuid4())
+    created_project = Project(name, uuid4(), time_ns())
     created_key = PublicKey("any pem", datetime.now(UTC), created_project.id, uuid4())
     create_project_with_key = mocker.patch.object(
         repo, "create_project_with_key", return_value=(created_project, created_key)
@@ -85,7 +86,7 @@ def test_it_creates_project_and_key(client: FlaskClient, mocker: MockerFixture):
     assert res.status_code == HTTPStatus.CREATED
     assert res.json
     assert set(res.json.keys()) == {"project", "kid"}
-    assert set(res.json["project"].keys()) == {"id", "name"}
+    assert set(res.json["project"].keys()) == {"id", "name", "created_at_us"}
     assert res.json["project"]["id"]
     assert res.json["project"]["name"] == name
     assert res.json["kid"] == str(created_key.id)
