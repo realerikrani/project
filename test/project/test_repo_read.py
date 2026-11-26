@@ -149,10 +149,10 @@ def test_it_reads_next_projects():
 
     # when
     result_group1 = read_next_projects(
-        group_id1, 2, project2.created_at_us, project3.id
+        group_id1, 2, project3.created_at_us, project3.id
     )
     result_group2 = read_next_projects(
-        group_id2, 2, project2.created_at_us, project4.id
+        group_id2, 2, project3.created_at_us, project4.id
     )
 
     # then
