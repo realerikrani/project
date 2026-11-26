@@ -3,13 +3,6 @@ from typing import Any
 from realerikrani import base64token
 
 
-def to_page_size(data: dict) -> int | None:
-    try:
-        return int(data["page_size"])
-    except (ValueError, KeyError):
-        return None
-
-
 def to_page_size_and_data(data: dict) -> tuple[int, list[tuple[str, Any]]] | None:
     try:
         return int(data["page_size"]), []
